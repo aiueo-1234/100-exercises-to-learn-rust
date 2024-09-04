@@ -37,6 +37,17 @@ pub enum Status {
     Done,
 }
 
+impl Ticket {
+    pub fn new(id:TicketId,draft:TicketDraft)->Self{
+        Self {
+            id:id,
+            title:draft.title,
+            description:draft.description,
+            status:Status::ToDo
+        }
+    }
+}
+
 impl TicketStore {
     pub fn new() -> Self {
         Self {
@@ -44,8 +55,13 @@ impl TicketStore {
         }
     }
 
-    pub fn add_ticket(&mut self, ticket: Ticket) {
-        self.tickets.push(ticket);
+    pub fn add_ticket(&mut self, ticket: TicketDraft) -> TicketId{
+        self.tickets.push(Ticket::new(TicketId(self.tickets.len() as u64), ticket));
+        TicketId(self.tickets.len() as u64 - 1)
+    }
+
+    pub fn get(&self,id:TicketId) -> Option<&Ticket>{
+        self.tickets.get(id.0 as usize)
     }
 }
 
